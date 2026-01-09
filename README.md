@@ -41,3 +41,26 @@ Combined frontend task implementation covering UI, structure, and performance op
 - LCP ~1.8s
 - Performance score ~85+
 
+Combined frontend implementation covering Tasks 4, 5, and 6.
+
+## Local Development Setup
+1. Install Node.js (LTS)
+2. Run `npm install`
+3. Start dev server using `npm run dev`
+4. App runs on http://localhost:5173
+
+## Screens Implemented
+- Home
+- Product Listing
+
+## Improvements (Task 6)
+- Refactored ProductCard using React.memo
+- Implemented lazy image loading
+- Added loading skeletons and empty state
+- Added routing using React Router
+
+## Why This Improves UX/Performance
+- Faster load time
+- Better perceived performance
+- Cleaner and reusable components
+- Scalable routing structure

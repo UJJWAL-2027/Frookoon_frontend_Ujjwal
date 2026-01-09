@@ -1,12 +1,15 @@
-const Header = () => (
-  <header className="header">
-    <h2>FROOKOON</h2>
-    <nav>
-      <a>Home</a>
-      <a>Stores</a>
-      <a>Cart</a>
-    </nav>
-  </header>
-);
+import { NavLink } from "react-router-dom";
+
+const Header = () => {
+  return (
+    <header className="header">
+      <h2>FROOKOON</h2>
+      <nav>
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/products">Products</NavLink>
+      </nav>
+    </header>
+  );
+};
 
 export default Header;
