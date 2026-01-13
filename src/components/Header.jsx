@@ -1,15 +1,9 @@
-import { NavLink } from "react-router-dom";
-
-const Header = () => {
+function Header() {
   return (
-    <header className="header">
-      <h2>FROOKOON</h2>
-      <nav>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/products">Products</NavLink>
-      </nav>
+    <header style={{ padding: "15px", background: "#000", color: "#fff" }}>
+      <h2>Frookoon</h2>
     </header>
   );
-};
+}
 
 export default Header;

@@ -1,9 +1,9 @@
-const Footer = () => {
+function Footer() {
   return (
-    <footer className="footer">
-      © 2026 Frookoon. All rights reserved.
+    <footer style={{ padding: "15px", textAlign: "center" }}>
+      © 2026 Frookoon
     </footer>
   );
-};
+}
 
 export default Footer;
