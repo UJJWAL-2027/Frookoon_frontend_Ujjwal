@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { verifyOtp } from "../services/authApi";
+import { saveAuth } from "../utils/auth";
 import { useLocation, useNavigate } from "react-router-dom";
-import { saveToken } from "../utils/auth";
 
 function LoginOtp() {
   const [otp, setOtp] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+
   const phone = location.state?.phone;
 
-  const handleVerifyOtp = async () => {
-    const response = await verifyOtp(phone, otp);
-    saveToken(response.token);
+  const handleVerify = async () => {
+    const res = await verifyOtp(phone, otp);
+    saveAuth(res.token, res.user);
     navigate("/");
   };
 
@@ -20,12 +21,12 @@ function LoginOtp() {
       <h2>Enter OTP</h2>
       <input
         type="number"
-        placeholder="Enter OTP"
+        placeholder="123456"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
       />
       <br /><br />
-      <button onClick={handleVerifyOtp}>Verify OTP</button>
+      <button onClick={handleVerify}>Verify OTP</button>
     </div>
   );
 }

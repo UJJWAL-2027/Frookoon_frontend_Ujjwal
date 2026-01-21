@@ -18,23 +18,13 @@ function App() {
         <Route
           path="/"
           element={
-            isLoggedIn() ? (
-              <ProductListing />
-            ) : (
-              <Navigate to="/login" />
-            )
+            isLoggedIn() ? <ProductListing /> : <Navigate to="/login" />
           }
         />
 
         <Route
           path="/cart"
-          element={
-            isLoggedIn() ? (
-              <Cart cart={cart} />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn() ? <Cart cart={cart} /> : <Navigate to="/login" />}
         />
       </Routes>
     </BrowserRouter>

@@ -16,7 +16,7 @@ function LoginPhone() {
       <h2>Login</h2>
       <input
         type="tel"
-        placeholder="Enter phone number"
+        placeholder="+919876543210"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
