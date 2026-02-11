@@ -1,45 +1,48 @@
-// src/screens/product/ProductDetailScreen.tsx
+import React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { useRoute } from "@react-navigation/native";
 
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-} from "react-native";
-import { getProducts, Product } from "./ProductViewModel";
-
-const ProductDetailScreen = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    getProducts().then(setProducts);
-  }, []);
-
-  const renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.row}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.name}>{item.name}</Text>
-    </View>
-  );
+export default function ProductDetailScreen() {
+  const route: any = useRoute();
+  const { product } = route.params;
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={products}
-        keyExtractor={(i) => i.id}
-        renderItem={renderItem}
-      />
+      <Image source={{ uri: product.image }} style={styles.image} />
+
+      <Text style={styles.title}>{product.name}</Text>
+      <Text style={styles.price}>₹ {product.price}</Text>
+
+      <Text style={styles.desc}>
+        Premium dairy product crafted for freshness and quality.
+      </Text>
     </View>
   );
-};
-
-export default ProductDetailScreen;
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#F4F4F4" },
-  row: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
-  image: { width: 70, height: 70, borderRadius: 12, marginRight: 14 },
-  name: { fontSize: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 20,
+  },
+  image: {
+    width: "100%",
+    height: 260,
+    borderRadius: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 16,
+  },
+  price: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginVertical: 10,
+  },
+  desc: {
+    color: "#666",
+    lineHeight: 22,
+  },
 });
