@@ -6,6 +6,7 @@ export interface Store {
   image: string;
   time: string;
   distance: string;
+  freeDelivery: boolean;
 }
 
 export interface Product {
@@ -15,14 +16,15 @@ export interface Product {
 }
 
 export const getStores = async (): Promise<Store[]> => {
-  // mock API response
+  // mock API response matching Image 2 & 3
   return [
     {
       id: "1",
       name: "Shyam Grocery",
-      image: "https://via.placeholder.com/80",
+      image: "https://via.placeholder.com/80", // Replace with actual asset if available
       time: "30-35 Min",
       distance: "1.1 Km",
+      freeDelivery: true,
     },
     {
       id: "2",
@@ -30,6 +32,7 @@ export const getStores = async (): Promise<Store[]> => {
       image: "https://via.placeholder.com/80",
       time: "30-35 Min",
       distance: "1.1 Km",
+      freeDelivery: true,
     },
     {
       id: "3",
@@ -37,11 +40,21 @@ export const getStores = async (): Promise<Store[]> => {
       image: "https://via.placeholder.com/80",
       time: "30-35 Min",
       distance: "1.1 Km",
+      freeDelivery: true,
+    },
+    {
+      id: "4",
+      name: "Kamal Grocery", // Duplicate for list length
+      image: "https://via.placeholder.com/80",
+      time: "30-35 Min",
+      distance: "1.1 Km",
+      freeDelivery: true,
     },
   ];
 };
 
 export const getProducts = async (): Promise<Product[]> => {
+  // mock API response matching Image 1
   return [
     { id: "1", name: "Amul Butter", image: "https://via.placeholder.com/80" },
     { id: "2", name: "Sweat cream salted butter", image: "https://via.placeholder.com/80" },
