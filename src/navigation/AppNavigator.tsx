@@ -9,6 +9,7 @@ import BottomTabs from "./BottomTabs";
 
 import ProductListScreen from "../screens/product/ProductListScreen";
 import ProductDetailScreen from "../screens/product/ProductDetailScreen";
+import CreateAccountScreen from "../screens/CreateAccountScreen";
 
 /**
  * Stack Param Types (VERY IMPORTANT for TS projects)
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   Home: undefined;
   ProductList: undefined;
   ProductDetail: undefined;
+  CreateAccount: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,6 +45,7 @@ const AppNavigator = () => {
       {/* Product Module (YOUR TASK) */}
       <Stack.Screen name="ProductList" component={ProductListScreen} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+      <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
     </Stack.Navigator>
   );
 };

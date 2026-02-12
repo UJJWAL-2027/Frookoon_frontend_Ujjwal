@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
 import Logo from '../components/Logo';
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = ({ navigation }: { navigation: any }) => {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }) => {
     }).start();
 
     setTimeout(() => {
-      navigation.replace('Login');
+      navigation.replace('CreateAccount');
     }, 3000);
   }, []);
 

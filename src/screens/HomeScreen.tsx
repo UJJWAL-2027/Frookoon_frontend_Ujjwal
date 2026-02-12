@@ -28,7 +28,7 @@ const deals = [
   { id: '6', name: 'Cucumber', price: '40', image: require('../assets/cucumber.png') },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
   const [showLocationPopup, setShowLocationPopup] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -80,7 +80,11 @@ const HomeScreen = () => {
           </View>
 
           <View style={styles.searchBar}>
-            <TextInput placeholder="Search..." style={styles.searchInput} />
+            <TextInput
+              placeholder="Search..."
+              style={styles.searchInput}
+              onFocus={() => navigation.navigate('ProductList')}
+            />
             <Text style={styles.mic}>🎤</Text>
           </View>
 
