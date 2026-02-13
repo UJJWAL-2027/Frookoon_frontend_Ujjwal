@@ -1,207 +1,308 @@
-// src/screens/product/ProductListScreen.tsx
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
-  FlatList,
-  TouchableOpacity,
   StyleSheet,
   Image,
   TextInput,
+  TouchableOpacity,
+  FlatList,
   SafeAreaView,
-  StatusBar,
-  ScrollView // Added
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import { getStores, getProducts, Store, Product } from "./ProductViewModel";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Feather from "react-native-vector-icons/Feather";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { useProductViewModel, Product, Store } from "./ProductViewModel";
 
-const ProductListScreen = ({ navigation, route }: any) => {
-  const { initialQuery } = route.params || {};
-  const [searchText, setSearchText] = useState(initialQuery || "Butter");
-  const [stores, setStores] = useState<Store[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+const ProductListScreen = ({ navigation }: any) => {
+  const {
+    searchText,
+    setSearchText,
+    setIsFocused,
+    filteredProducts,
+    filteredStores,
+    isSearchingProducts,
+    isSearchingStores,
+    showAllStores,
+    stores,
+  } = useProductViewModel();
 
-  // For demo purposes, we'll toggle between showing products and stores
-  // based on the search text to satisfy "match design of image 1 and 2"
-  const isStoreSearch = searchText.toLowerCase() === "shyam grocery";
-
-  useEffect(() => {
-    getStores().then(setStores);
-    getProducts().then(setProducts);
-  }, []);
-
-  // Product Item Styles (Image 1)
   const renderProductItem = ({ item }: { item: Product }) => (
-    <View style={styles.productCard}>
+    <TouchableOpacity
+      style={styles.productRow}
+      onPress={() => navigation.navigate("ProductDetail", { product: item })}
+    >
       <View style={styles.productImageContainer}>
         <Image source={{ uri: item.image }} style={styles.productImage} />
       </View>
       <Text style={styles.productName}>{item.name}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
-  // Store Item Styles (Image 2)
   const renderStoreItem = ({ item }: { item: Store }) => (
-    <TouchableOpacity
-      style={styles.storeCard}
-      onPress={() => navigation.navigate("ProductDetail", { store: item })}
-    >
+    <View style={styles.storeCard}>
       <Image source={{ uri: item.image }} style={styles.storeImage} />
       <View style={styles.storeInfo}>
         <Text style={styles.storeName}>{item.name}</Text>
         <View style={styles.storeDetailsRow}>
-          <Icon name="time-outline" size={16} color="#000" />
-          <Text style={styles.storeDetailsText}> {item.time}</Text>
-          <Text style={styles.storeDetailsText}>  {item.distance}</Text>
+          <View style={styles.iconTextRow}>
+            <Feather name="clock" size={14} color="#666" />
+            <Text style={styles.storeDetailText}>{item.time}</Text>
+          </View>
+          <Text style={styles.distanceText}>{item.distance}</Text>
         </View>
         <View style={styles.deliveryRow}>
-          <Icon name="bus-outline" size={16} color="#000" />
-          <Text style={styles.deliveryText}> Free Delivery</Text>
+          <FontAwesome5 name="truck" size={12} color="#666" />
+          <Text style={styles.deliveryText}>{item.delivery}</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
+
+  const getListContent = () => {
+    if (isSearchingProducts) {
+      return (
+        <FlatList
+          data={filteredProducts}
+          keyExtractor={(item) => item.id}
+          renderItem={renderProductItem}
+          contentContainerStyle={styles.listContent}
+        />
+      );
+    }
+
+    if (isSearchingStores) {
+      return (
+        <FlatList
+          data={filteredStores}
+          keyExtractor={(item) => item.id}
+          renderItem={renderStoreItem}
+          contentContainerStyle={styles.listContent}
+        />
+      );
+    }
+
+    if (showAllStores) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sectionTitle}>ALL STORES</Text>
+          <FlatList
+            data={stores}
+            keyExtractor={(item) => item.id}
+            renderItem={renderStoreItem}
+            contentContainerStyle={styles.listContent}
+          />
+        </View>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoText}>FROOKOON</Text>
+            </View>
+          </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header Title */}
-        <Text style={styles.headerTitle}>Product listing</Text>
+          <View style={styles.searchBarContainer}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="chevron-back" size={24} color="#000" />
+            </TouchableOpacity>
 
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>FROOKOON</Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              value={searchText}
+              onChangeText={setSearchText}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+            />
+
+            {searchText.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchText("")}>
+                <Ionicons name="close" size={20} color="#000" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
-        {/* Search Bar */}
-        <View style={styles.searchBarContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="chevron-back" size={28} color="#000" />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.searchInput}
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="Search"
-            placeholderTextColor="#000"
-          />
-          <TouchableOpacity onPress={() => setSearchText("")}>
-            <Icon name="close" size={22} color="#000" fontWeight="bold" />
-          </TouchableOpacity>
+        <View style={styles.content}>
+          {getListContent()}
         </View>
-
-        {/* List */}
-        <View style={styles.listContainer}>
-          {isStoreSearch ? (
-            stores.map(item => <View key={item.id}>{renderStoreItem({ item })}</View>)
-          ) : (
-            products.map(item => <View key={item.id}>{renderProductItem({ item })}</View>)
-          )}
-        </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
-export default ProductListScreen;
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" }, // White background as per image
-  scrollContent: { padding: 20 },
-
-  headerTitle: {
-    fontSize: 18,
-    color: "#ccc",
-    marginBottom: 20,
-    fontWeight: '500'
+  container: {
+    flex: 1,
+    backgroundColor: "#F4F4F4",
   },
-
-  logoContainer: { alignItems: "flex-start", marginBottom: 20 },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    backgroundColor: "#F4F4F4",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 15,
+  },
   logoCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: "#E0D8C0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
-  logoText: { fontSize: 10, fontWeight: "bold" },
-
+  logoText: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: "#4A4A4A",
+  },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#FFF",
+    borderRadius: 30,
     borderWidth: 1.5,
     borderColor: "#000",
-    borderRadius: 30, // Pill shape
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginBottom: 30,
-    height: 50
+    height: 52,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  backButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: "#000",
     textAlign: "center",
-    fontWeight: "500"
   },
-
-  listContainer: {
-    gap: 15
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
-
-  // Product Item Styles
-  productCard: {
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: "#000",
+    marginBottom: 15,
+    marginTop: 10,
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  // Product Row Styles (Image 1)
+  productRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 14,
   },
   productImageContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: "#000",
-    borderRadius: 15,
-    padding: 5,
-    marginRight: 20
+    backgroundColor: "#FFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 14,
   },
   productImage: {
-    width: 80,
-    height: 50,
+    width: 60,
+    height: 60,
     resizeMode: "contain",
   },
   productName: {
     fontSize: 16,
+    fontWeight: "500",
     color: "#000",
-    fontWeight: "400",
     flex: 1,
-    flexWrap: 'wrap'
   },
-
-  // Store Item Styles
+  // Store Card Styles (Image 2)
   storeCard: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 15,
+    backgroundColor: "#FFF",
+    borderRadius: 18,
+    borderWidth: 0.5,
+    borderColor: "#CCC",
     padding: 12,
-    backgroundColor: "#fff",
+    marginBottom: 15,
+    // Soft Shadow
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   storeImage: {
-    width: 65,
-    height: 75,
+    width: 70,
+    height: 70,
+    borderRadius: 10,
     marginRight: 15,
-    resizeMode: "contain" // Changed to contain to show full package
   },
-  storeInfo: { flex: 1 },
-  storeName: { fontSize: 16, fontWeight: "bold", color: "#000", marginBottom: 5 },
-  storeDetailsRow: { flexDirection: "row", alignItems: "center", marginBottom: 5 },
-  storeDetailsText: { fontSize: 14, color: "#000", fontWeight: "400", marginLeft: 5 },
-  deliveryRow: { flexDirection: "row", alignItems: "center" },
-  deliveryText: { fontSize: 14, color: "#000", fontWeight: "400", marginLeft: 8 },
+  storeInfo: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  storeName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 4,
+  },
+  storeDetailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  iconTextRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  storeDetailText: {
+    fontSize: 12,
+    color: "#666",
+    marginLeft: 4,
+  },
+  distanceText: {
+    fontSize: 12,
+    color: "#666",
+  },
+  deliveryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  deliveryText: {
+    fontSize: 12,
+    color: "#666",
+    marginLeft: 6,
+  },
 });
+
+export default ProductListScreen;

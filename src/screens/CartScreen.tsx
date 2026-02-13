@@ -1,6 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import React, { useState } from 'react';
+import Logo from '../components/Logo';
+import { useCart } from '../context/CartContext';
+
+import React from 'react';
 import {
   View,
   Text,
@@ -9,7 +12,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Logo from '../components/Logo';
 
 /* ------------------ TYPES ------------------ */
 type CartItem = {
@@ -20,77 +22,46 @@ type CartItem = {
   image: any;
 };
 
-/* ------------------ SCREEN ------------------ */
+const ALL_PRODUCTS: CartItem[] = [
+  { id: 1, name: 'MILK', price: 30, image: require('../assets/milk.png'), quantity: 1 },
+  { id: 2, name: 'AMUL CHEESE SLICE', price: 88, image: require('../assets/cheese.png'), quantity: 1 },
+  { id: 3, name: 'Brown Bread', price: 35, image: require('../assets/bread.png'), quantity: 1 },
+  { id: 4, name: 'Coca Cola', price: 40, image: require('../assets/coke.png'), quantity: 1 },
+  { id: 5, name: 'Haldiram Boondi', price: 59, image: require('../assets/boondi.png'), quantity: 1 },
+  { id: 6, name: 'Tata Sampann', price: 135, image: require('../assets/tata.png'), quantity: 1 },
+];
+
 const CartScreen = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: 'MILK',
-      price: 30,
-      quantity: 1,
-      image: require('../assets/milk.png'),
-    },
-    {
-      id: 2,
-      name: 'AMUL CHEESE SLICE',
-      price: 88,
-      quantity: 1,
-      image: require('../assets/cheese.png'),
-    },
-{
-      id: 3,
-      name: 'Brown Bread',
-      price: 35,
-      quantity: 1,
-      image: require('../assets/bread.png'),
-    },
-{
-id: 4,
-      name: 'Coca Cola',
-      price: 40,
-      quantity: 1,
-      image: require('../assets/coke.png'),
-    },
-  ]);
-
-  const increaseQty = (id: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
-
-  const decreaseQty = (id: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
+  const navigation = useNavigation<any>();
+  const { cartItems, addToCart, increaseQty, decreaseQty } = useCart();
 
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
+  const similarProducts = ALL_PRODUCTS.filter(
+    p => !cartItems.some(c => c.id === p.id)
+  );
+
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* ---------- HEADER ---------- */}
-        <View style={styles.headerColumn}>
+
+        {/* LOGO */}
+        <View style={styles.logoWrapper}>
           <Logo size={45} />
-          <Text style={styles.headerText}>
-            My Cart ({cartItems.length})
-          </Text>
         </View>
 
+        {/* HEADER */}
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>My Cart ({cartItems.length})</Text>
+        </View>
 
-        {/* ---------- CART ITEMS ---------- */}
+        {/* CART ITEMS */}
         {cartItems.map(item => (
           <View key={item.id} style={styles.card}>
             <Image source={item.image} style={styles.image} />
@@ -114,40 +85,33 @@ id: 4,
           </View>
         ))}
 
-        {/* ---------- SIMILAR PRODUCTS ---------- */}
-        <Text style={styles.similarTitle}>Similar Product</Text>
+        {/* SIMILAR PRODUCTS */}
+        <Text style={styles.similarTitle}>Similar Products</Text>
 
-        <View style={styles.similarRow}>
-          <View style={styles.similarCard}>
-            <Image
-              source={require('../assets/boondi.png')}
-              style={styles.similarImage}
-            />
-            <Text style={styles.similarName}>HALDIRAM BOONDI</Text>
-            <Text style={styles.similarPrice}>₹ 59</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {similarProducts.map(item => (
+            <View key={item.id} style={styles.similarCard}>
+              <Image source={item.image} style={styles.similarImage} />
+              <Text style={styles.similarName}>{item.name}</Text>
+              <Text style={styles.similarPrice}>₹ {item.price}</Text>
 
-            <TouchableOpacity style={styles.addBtn}>
-              <Text style={styles.addText}>Add to Cart</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                style={styles.addBtn}
+                onPress={() => addToCart({ ...item, quantity: 1 })}
+              >
+                <Text style={styles.addText}>Add to Cart</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
 
-          <View style={styles.similarCard}>
-            <Image
-              source={require('../assets/tata.png')}
-              style={styles.similarImage}
-            />
-            <Text style={styles.similarName}>TATA SAMPANN</Text>
-            <Text style={styles.similarPrice}>₹ 135</Text>
-
-            <TouchableOpacity style={styles.addBtn}>
-              <Text style={styles.addText}>Add to Cart</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </ScrollView>
 
-      {/* ---------- CHECKOUT ---------- */}
-      <TouchableOpacity style={styles.checkoutBtn}>
+      {/* CHECKOUT */}
+      <TouchableOpacity
+        style={styles.checkoutBtn}
+        onPress={() => navigation.navigate('Checkout', { totalAmount })}
+      >
         <Text style={styles.checkoutText}>
           PROCEED TO CHECKOUT • ₹ {totalAmount}
         </Text>
@@ -158,6 +122,7 @@ id: 4,
 
 export default CartScreen;
 
+
 /* ------------------ STYLES ------------------ */
 const styles = StyleSheet.create({
   container: {
@@ -165,17 +130,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
+logoWrapper: {
+  paddingHorizontal: 16,
+  paddingTop: 16,
+},
 
-  headerText: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginLeft: 12,
-  },
+headerRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  marginBottom: 10,
+},
+
+headerText: {
+  fontSize: 18,
+  fontWeight: '700',
+  marginLeft: 12,
+},
+
 
   card: {
     flexDirection: 'row',
@@ -244,19 +216,19 @@ const styles = StyleSheet.create({
 
   similarRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
   },
 
-  similarCard: {
-    width: '48%',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    backgroundColor: '#F5F5F5',
-    padding: 10,
-    alignItems: 'center',
-  },
+ similarCard: {
+   width: 140,
+   borderWidth: 1,
+   borderColor: '#ddd',
+   borderRadius: 12,
+   backgroundColor: '#F5F5F5',
+   padding: 10,
+   alignItems: 'center',
+   marginRight: 12,
+ },
+
 
   similarImage: {
     width: 70,

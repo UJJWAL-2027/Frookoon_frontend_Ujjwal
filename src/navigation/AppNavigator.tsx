@@ -11,8 +11,12 @@ import ProductListScreen from "../screens/product/ProductListScreen";
 import ProductDetailScreen from "../screens/product/ProductDetailScreen";
 import CreateAccountScreen from "../screens/CreateAccountScreen";
 
+import CheckoutScreen from "../screens/CheckoutScreen";
+import PaymentSuccessScreen from "../screens/PaymentSuccessScreen";
+import ProductDetailsScreen from "../screens/ProductDetailsScreen";
+
 /**
- * Stack Param Types (VERY IMPORTANT for TS projects)
+ * Stack Param Types
  */
 export type RootStackParamList = {
   Splash: undefined;
@@ -23,6 +27,8 @@ export type RootStackParamList = {
   ProductList: undefined;
   ProductDetail: undefined;
   CreateAccount: undefined;
+  Checkout: undefined;
+  PaymentSuccess: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,10 +48,21 @@ const AppNavigator = () => {
       {/* Main App */}
       <Stack.Screen name="Home" component={BottomTabs} />
 
-      {/* Product Module (YOUR TASK) */}
+      {/* Product Module */}
       <Stack.Screen name="ProductList" component={ProductListScreen} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
       <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+
+      {/* Checkout Flow (Teammate) */}
+      <Stack.Screen name="Checkout" component={CheckoutScreen} />
+      <Stack.Screen
+        name="PaymentSuccess"
+        component={PaymentSuccessScreen}
+        options={{
+          presentation: "modal",
+          animation: "slide_from_bottom",
+        }}
+      />
     </Stack.Navigator>
   );
 };
