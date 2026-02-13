@@ -61,6 +61,7 @@ const CreateAccountScreen = () => {
     const handleCreateAccount = () => {
         // Logic for account creation
         console.log("Creating account for:", fullName, email);
+        navigation.replace('Location');
     };
 
     const handleSocialSignUp = (provider: string) => {
@@ -153,18 +154,6 @@ const CreateAccountScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Bottom Text */}
-                    <View style={styles.bottomTextContainer}>
-                        <Text style={styles.bottomTextGrey}>
-                            Already Have an Account ?{" "}
-                            <Text
-                                style={styles.bottomTextOrange}
-                                onPress={() => navigation.navigate("Login")}
-                            >
-                                Log In
-                            </Text>
-                        </Text>
-                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -293,17 +282,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#000",
         fontWeight: "500",
-    },
-    bottomTextContainer: {
-        marginTop: 30,
-        alignItems: "center",
-    },
-    bottomTextGrey: {
-        fontSize: 14,
-        color: "#777",
-    },
-    bottomTextOrange: {
-        color: "#F57C00",
-        fontWeight: "bold",
     },
 });

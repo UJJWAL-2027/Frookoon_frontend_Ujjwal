@@ -15,15 +15,15 @@ const OTPScreen = () => {
   const phone = route.params?.phone || '';
   const [timer, setTimer] = useState(28);
 
-   useEffect(() => {
-     if (timer === 0) return;
+  useEffect(() => {
+    if (timer === 0) return;
 
-     const interval = setInterval(() => {
-       setTimer((prev) => prev - 1);
-     }, 1000);
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
 
-     return () => clearInterval(interval);
-   }, [timer]);
+    return () => clearInterval(interval);
+  }, [timer]);
 
 
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -62,7 +62,7 @@ const OTPScreen = () => {
         {otp.map((digit, index) => (
           <TextInput
             key={index}
-            ref={(ref) => (inputs.current[index] = ref)}
+            ref={(ref) => { inputs.current[index] = ref; }}
             style={[
               styles.otpBox,
               error && styles.otpErrorBox, // red style on error
@@ -82,25 +82,25 @@ const OTPScreen = () => {
         </Text>
       )}
 
-     <TouchableOpacity
-       disabled={timer !== 0}
-       onPress={() => {
-         setTimer(28); // reset timer
-       }}
-     >
-       <Text style={styles.resend}>
-         {timer === 0 ? (
-           <Text style={{ color: '#ff7a00' }}>Resend OTP</Text>
-         ) : (
-           <>
-             Resend OTP in{' '}
-             <Text style={{ color: '#ff7a00' }}>
-               00:{timer.toString().padStart(2, '0')}
-             </Text>
-           </>
-         )}
-       </Text>
-     </TouchableOpacity>
+      <TouchableOpacity
+        disabled={timer !== 0}
+        onPress={() => {
+          setTimer(28); // reset timer
+        }}
+      >
+        <Text style={styles.resend}>
+          {timer === 0 ? (
+            <Text style={{ color: '#ff7a00' }}>Resend OTP</Text>
+          ) : (
+            <>
+              Resend OTP in{' '}
+              <Text style={{ color: '#ff7a00' }}>
+                00:{timer.toString().padStart(2, '0')}
+              </Text>
+            </>
+          )}
+        </Text>
+      </TouchableOpacity>
 
 
       <TouchableOpacity
@@ -112,7 +112,7 @@ const OTPScreen = () => {
           const enteredOtp = otp.join('');
 
           if (enteredOtp === '1234') {
-            navigation.replace('Location');
+            navigation.replace('CreateAccount');
           } else {
             setError(true);
           }

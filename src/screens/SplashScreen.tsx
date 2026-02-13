@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
     }).start();
 
     setTimeout(() => {
-      navigation.replace('CreateAccount');
+      navigation.replace('Login');
     }, 3000);
   }, []);
 
